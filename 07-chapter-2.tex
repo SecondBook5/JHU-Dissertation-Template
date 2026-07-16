@@ -1,21 +1,78 @@
-\chapter{Chapter title goes here} \label{chap:chap-2}
+\chapter{Multimodal Lung Adenocarcinoma Progression Data} \label{chap:data}
 
-%%%% OPTIONAL EPIGRAPH EXAMPLE
-\epigraph{Do not believe everything you see on the internet.}{-- Albert Einstein}
+\section{Study system and ordered disease stages}
 
+StageBridge was developed and evaluated in a multimodal lung adenocarcinoma precursor cohort spanning Normal lung, atypical adenomatous hyperplasia (AAH), adenocarcinoma in situ (AIS), minimally invasive adenocarcinoma (MIA), and invasive lung adenocarcinoma (LUAD). The ordered stages define four adjacent transition edges:
 
-%%%% MUST: if the chapter is a reprint or submitted paper, you must declare it
-%% you can use enumerate or itemize environment if you have more than one paper 
-%% \mybibexclude{} will exclude this citation from the final bibliography
-%% if this paper appears somewhere else then remove \mybibexclude{} command
+\begin{equation}
+\mathrm{Normal}\rightarrow\mathrm{AAH}\rightarrow\mathrm{AIS}\rightarrow\mathrm{MIA}\rightarrow\mathrm{LUAD}.
+\label{eq:stage-sequence}
+\end{equation}
 
-\begin{singlespace}         % you can also use `onehalfspace` to relax the spacing
-    This chapter is adapted from the following article with permission from <publisher>
-    
-    \fullcite{einstein}. \mybibexclude{einstein}
-\end{singlespace} 
+The cohort contains tissue from 25 donors and combines single-nucleus RNA sequencing, spatial transcriptomics, and genomic measurements. The working StageBridge data products include approximately 1.4 million single-cell or single-nucleus profiles and approximately 640,000 spatial observations after integration of the study cohort and reference resources. Final sample, cell, and spot counts will be reported from the frozen analysis manifest used for the thesis results.
 
+\section{Single-nucleus transcriptomic data}
 
-%%%% remove the following and add your chapter text here
-\section{Introduction}
-\Blindtext[2]
+Single-nucleus RNA sequencing provides the primary cell-state resolution for epithelial, immune, stromal, endothelial, and other tissue compartments. Processing includes sample-level quality control, removal of low-quality nuclei and likely multiplets, gene filtering, normalization, and construction of a shared latent representation. Cell identities are assigned through reference mapping and marker-based review, with particular attention to epithelial receiver populations and macrophage, lymphocyte, fibroblast, and endothelial sender states.
+
+The epithelial compartment is retained at higher state resolution than the surrounding context because the model predicts epithelial transitions. Non-epithelial populations are represented as typed context states that preserve biologically meaningful heterogeneity without requiring every sender population to share the same resolution as the receiver compartment.
+
+% TODO: Insert exact QC thresholds, normalization method, doublet procedure,
+% sample counts, cell counts, and final epithelial-state annotation table.
+
+\section{Spatial transcriptomic data}
+
+Spatial transcriptomics preserves lesion architecture and enables receiver-centered context construction. Each spatial observation is linked to tissue coordinates, stage, donor, sample, and inferred cell-state composition. Spatial preprocessing includes spot-level quality control, normalization, deconvolution or cell-state mapping, coordinate harmonization, and construction of local neighborhoods.
+
+The spatial representation serves two roles. First, it identifies which sender populations and molecular programs surround a candidate epithelial receiver. Second, it provides distance and neighborhood structure used by the receiver-centered context encoder. Context is therefore represented as a typed spatial set rather than a single pooled composition vector.
+
+% TODO: Lock the canonical deconvolution or mapping output and report the final
+% platform-specific preprocessing workflow used in the thesis experiments.
+
+\section{Dual-reference state representation}
+
+StageBridge uses the Human Lung Cell Atlas (HLCA) and Lung Cancer Atlas (LuCA) as complementary reference systems. HLCA anchors cell states relative to healthy lung biology, whereas LuCA provides a tumor-aware representation of disease-associated cell states. The two reference-derived embeddings are fused before transition learning so that the model can represent both deviation from healthy lung identity and similarity to established tumor-associated programs.
+
+Reference fusion is evaluated through single-reference ablations and alternative fusion strategies. These experiments test whether the two references contribute complementary information rather than functioning as redundant inputs.
+
+\section{Receiver and sender-context definition}
+
+An epithelial receiver is defined by its molecular state, disease stage, donor, sample, and spatial position. For receiver $i$, the local context is
+
+\begin{equation}
+\mathcal{C}_i = \left\{c_{ij}\right\}_{j=1}^{K_i},
+\end{equation}
+
+where each context element $c_{ij}$ contains the state of neighboring sender $j$, its cell or compartment type, its relative distance from the receiver, and associated molecular or pathway features. The context set can vary in size and has no biologically meaningful ordering.
+
+Receiver and context features are stored separately throughout model construction. This separation is required for CCRT because the receiver-intrinsic transition must be estimated independently from the additional context-associated residual.
+
+\section{Progression edges and optimal-transport populations}
+
+For each ordered edge $e=(s,t)$, source epithelial cells are drawn from stage $s$ and target epithelial cells are drawn from stage $t$. Optimal transport is used to construct a probabilistic coupling between the source and target populations in the shared latent space. Couplings are generated independently for each adjacent stage edge so that the model can learn stage-specific transition geometry rather than one undifferentiated trajectory from Normal lung to LUAD.
+
+The primary analyses retain the full five-stage sequence. Aggregated Normal, Preinvasive, and Invasive groupings are used only for explicitly defined summary analyses and are not substituted for the stage-resolved transition model.
+
+\section{Patient-aware evaluation design}
+
+All model selection and evaluation procedures are organized to prevent information from the same donor from appearing in both training and held-out evaluation sets. The canonical experiment uses patient-aware folds and repeated random seeds. Model inputs, optimal-transport couplings, scaling parameters, and biological summaries are generated within the appropriate training partition whenever they could otherwise transmit held-out information.
+
+The final thesis will report the exact fold assignment, seed list, checkpoint identifiers, model version, and output-contract version associated with every primary result.
+
+\section{Biological readouts}
+
+StageBridge outputs are interpreted through complementary biological analyses:
+
+\begin{itemize}
+    \item cell-state and compartment abundance across ordered stages;
+    \item inflammatory and cytokine-response programs, including IL1B-associated niches;
+    \item transcription-factor activity and stage-specific co-regulation networks;
+    \item ligand--receptor and pathway-level communication programs;
+    \item matrix metalloproteinase and extracellular-matrix remodeling programs;
+    \item vascular, lymphatic, immune-suppressive, and proliferative programs;
+    \item genomic alterations and their relationship to epithelial transition structure.
+\end{itemize}
+
+These readouts are analyzed at the donor or sample level whenever statistical inference requires independent biological units. Cell- and spot-level measurements are used to construct summaries and spatial maps rather than to inflate the effective sample size.
+
+% TODO: Add a final data-flow figure and one canonical cohort table.
