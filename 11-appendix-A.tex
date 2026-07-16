@@ -1,11 +1,48 @@
-%%%% necessary customization for the appendix and headers
-\appendix 
+%%%% Appendix formatting and header customization
+\appendix
 \makeatletter
 \addtocontents{toc}{\protect\renewcommand\protect\cftchappresnum{\@chapapp\ }}
 \makeatother
 \renewcommand{\thechapter}{\Alph{chapter}}
 
-\chapter{Some necessary information} \label{chap:appendix-a}
+\chapter{Reproducibility and Model Configuration} \label{chap:appendix-reproducibility}
 
-%% add your chapter text here
-\Blindtext[3]
+\section{Canonical analysis manifest}
+
+The final thesis release will include a machine-readable manifest linking each primary result to the exact dataset version, donor split, fold, random seed, model configuration, checkpoint, output-contract version, and analysis script.
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Field} & \textbf{Required content} \\
+\midrule
+Dataset & Frozen input manifest and data checksum \\
+Model & Git commit, configuration file, and checkpoint identifier \\
+Evaluation & Fold, held-out donors, seed, and metric definition \\
+Biology & Unit of analysis, statistical test, covariates, and correction method \\
+Figure & Source table, plotting script, and output filename \\
+\bottomrule
+\end{tabularx}
+\caption{Minimum provenance recorded for each thesis result.}
+\label{tab:result-provenance}
+\end{table}
+
+\section{Software and compute environment}
+
+% TODO: Insert operating system, Python and R versions, CUDA and PyTorch versions,
+% package lockfiles, accelerator model, CPU allocation, memory, and scheduler settings.
+
+\section{Model hyperparameters}
+
+% TODO: Insert final latent dimensions, number of context tokens, attention heads,
+% transformer blocks, OT regularization, flow-matching schedule, optimizer, learning
+% rates, batch sizes, early-stopping rule, and checkpoint-selection criterion.
+
+\section{Cross-validation folds and random seeds}
+
+% TODO: Insert donor-level fold table and exact repeated-seed design.
+
+\section{Output contract}
+
+The final StageBridge output contract will define versioned schemas for receiver-level predictions, context residuals, counterfactual effects, fold-level metrics, and biological summaries. This contract will prevent informal arrays, notebook-only objects, and incompatible result scales from entering the final thesis figures.
