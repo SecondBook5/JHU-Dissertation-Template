@@ -1,44 +1,25 @@
-\chap{Abstract} 
+\chap{Abstract}
 
+Cross-sectional single-cell and spatial omics resolve the cellular composition of premalignant tissues but do not directly observe how epithelial states change between ordered disease stages. This thesis introduces StageBridge, a context-conditioned residual transport (CCRT) framework for learning progression-aligned epithelial transition fields while separating the transition expected from the receiver state from the residual effect associated with its local tissue context. StageBridge combines dual-reference latent representations, receiver-centered set-based niche encoding, optimal-transport coupling, and conditional flow matching to model ordered transitions across Normal lung, atypical adenomatous hyperplasia (AAH), adenocarcinoma in situ (AIS), minimally invasive adenocarcinoma (MIA), and invasive lung adenocarcinoma (LUAD).
 
-%%%% your abstract goes here (word limit: 350)
-\Blindtext[3]
+Applied to a multimodal LUAD precursor cohort spanning single-nucleus RNA sequencing, spatial transcriptomics, and genomic measurements, StageBridge recovered a highly coherent Normal-to-preinvasive transition field and showed that structured local context contributes progression-relevant information beyond the epithelial receiver state alone. Biological analysis identified an early IL1B-associated inflammatory niche, stage-specific immune and stromal remodeling, and a nonlinear sequence of regulatory change. AAH exhibited expanded transcription-factor coordination consistent with inflammatory regulatory priming. The AAH-to-AIS transition showed a marked loss of transcription-factor network organization, identifying a regulatory bottleneck before morphologic invasion. Later progression was characterized by regulatory rewiring together with matrix metalloproteinase and extracellular-matrix remodeling, vascular adaptation, immune suppression, and proliferative expansion.
 
+These findings support a Prime--Collapse--Switch model of lung adenocarcinoma progression in which inflammatory and stromal context first primes a coordinated precursor state, regulatory organization contracts during the transition to AIS, and invasive disease establishes a distinct tissue-supporting program. StageBridge provides a general computational strategy for estimating how local cellular context redirects progression-associated transport from cross-sectional multimodal tissue data.
 
-%% list of keywords seperated by comma
-\keywords{Johns Hopkins, PhD, Masters, dissertation, thesis \LaTeX, template.}
+\keywords{single-cell omics, spatial transcriptomics, optimal transport, conditional flow matching, Set Transformer, lung adenocarcinoma, premalignancy, tumor microenvironment.}
 
-
-%%%%  committee members (add it right after the abstract w/o page break)
 \begin{singlespace}
 
-    %% if you have co-advisor, add here w/ \vspace{0.1in} as shown below
-    %% alternatively you can use minipage environment to put side-by-side
     \section*{Primary reader and thesis advisor}
-    
-    Dr. Chuck Darwin \\
-    Professor\\
-    Department of Biology\\
-    Johns Hopkins University, Baltimore MD 
 
+    Christopher Bradburne, PhD \\
+    Johns Hopkins University Applied Physics Laboratory
 
-    \section*{Secondary readers}
-    
-    Dr. Stewart Hawking\\
-    Professor\\
-    Department of Biology \\
-    Johns Hopkins University, Baltimore, MD 
-    
-    \vspace{0.1in}
-    
-    Dr. Jimmy Watson \\
-    Professor\\
-    Department of Biology \\
-    Johns Hopkins University, Baltimore, MD 
+    \section*{Secondary reader}
 
-    %% you can add more readers if you have them on your committee 
-    %% use \vspace{0.1in} in between members for clarity
-    %% you can also place committee members side-by-side using `minipage`
+    Tafadzwa L. Chaunzwa, MD \\
+    Memorial Sloan Kettering Cancer Center
 
+    % TODO: confirm official titles, affiliations, and any additional reader(s).
 
 \end{singlespace}
