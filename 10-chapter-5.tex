@@ -1,26 +1,92 @@
-\chapter{Chapter title goes here} \label{chap:chap-5}
+\chapter{Discussion and Conclusions} \label{chap:discussion}
 
+\section{Overview}
 
-%% remove the following and add your chapter text here
-\section{Introduction}
-\blindtext \parencite{knuth-fa}
+This thesis introduced StageBridge as a context-conditioned residual transport framework for learning progression-aligned epithelial transition fields from cross-sectional single-cell and spatial omics. The central methodological contribution is the separation of a receiver-intrinsic transition field from a context-associated residual. This decomposition creates a direct transition-level interpretation of the tissue microenvironment: context is measured by how much it changes the transition expected from the epithelial receiver state and ordered disease edge.
 
-%% this is an example table
-\begin{table}[h!]
-\centering
-\begin{tabular}{c c c c} 
-\toprule \toprule
-Col1 & Col2 & Col2 & Col3 \\ 
-\toprule \toprule
-1 & 6 & 87837 & 787 \\ 
-2 & 7 & 78 & 5415 \\
-3 & 545 & 778 & 7507 \\
-4 & 545 & 18744 & 7560 \\
-5 & 88 & 788 & 6344 \\ 
-\bottomrule
-\end{tabular}
-\caption{Table to test captions and labels taken from Overleaf.}
-\label{table:1}
-\end{table}
+Application to lung adenocarcinoma precursor progression produced three linked findings. First, early epithelial progression was highly coherent in the learned transition geometry. Second, structured local context contributed additional predictive information beyond receiver state alone. Third, the context-residual analysis aligned with a nonlinear biological sequence of inflammatory priming, transcription-factor network collapse, and invasive tissue-system rewiring.
 
-\Blindtext[2]
+\section{CCRT provides a transition-level definition of context effect}
+
+A central difficulty in spatial-omics analysis is defining what it means for a niche to influence a receiver cell. Spatial proximity, ligand--receptor compatibility, and correlated pathway activity identify plausible interactions, but they do not directly estimate how a local context changes an epithelial transition. StageBridge addresses this problem by defining the context effect in the same latent geometry as the modeled transition:
+
+\begin{equation}
+\Delta v_{\mathrm{context}}
+=
+v_{\mathrm{full}}-v_{\mathrm{receiver}}.
+\end{equation}
+
+This definition has several consequences. It preserves a strong role for intrinsic epithelial state while still allowing local context to matter. It supports stage-specific effects, so that the same sender or pathway can alter different transitions in different ways. It also enables counterfactual perturbation of sender populations and programs without treating attention weights as causal effect estimates.
+
+The resulting interpretation is biologically realistic. Epithelial state constrains the transitions available to a cell, whereas local inflammatory, stromal, immune, and vascular contexts alter which part of that transition capacity is expressed. StageBridge therefore models context as a structured modifier of progression rather than as an alternative to cell-intrinsic biology.
+
+\section{Early progression is organized and context responsive}
+
+The strongest transition alignment occurred during Normal-to-preinvasive progression. This result suggests that the earliest movement away from normal alveolar identity follows a comparatively coherent progression geometry. Later transitions are more heterogeneous because invasive disease combines multiple epithelial lineages, genomic states, proliferative programs, and tissue contexts.
+
+The early transition was associated with increasing IL1B-related inflammatory signaling and a distinct preinvasive tissue composition. Importantly, inflammatory signal increased despite reductions in broad immune and stromal abundance. The precursor niche was therefore not defined by indiscriminate immune-cell accumulation. It was defined by selective reorganization of tissue populations and signaling programs.
+
+This distinction supports the use of receiver-centered context encoding. A pooled measure of total immune or stromal abundance would not capture the same biology as a typed local context containing specific macrophage, lymphocyte, fibroblast, and pathway states.
+
+\section{AAH is a regulatory-priming state}
+
+The transcription-factor network analysis changes the interpretation of AAH. AAH was not only the first histologically recognizable precursor. It showed expanded transcription-factor coordination in the setting of inflammatory and stromal activation. This combination indicates that AAH is an organized response state in which epithelial cells remain coordinated while adapting to a progression-associated tissue environment.
+
+The Prime phase therefore links niche and regulatory findings. IL1B-associated inflammation, stromal remodeling, and coordinated transcription-factor activity emerge together. This phase may represent a window in which precursor epithelial cells remain strongly responsive to environmental signaling and in which perturbation of inflammatory or stromal context could have a large transition-level effect.
+
+\section{AAH-to-AIS defines a regulatory bottleneck}
+
+The sharp contraction of transcription-factor co-regulation between AAH and AIS is the central biological transition identified in this thesis. The result is not a generic increase or decrease in individual transcription factors. It is a systems-level loss of coordination among regulators, including disruption of AP-1/FOS-associated relationships with SP1- and NF-$\kappa$B-related programs.
+
+This regulatory collapse precedes morphologic invasion. AIS and MIA retain a relatively sparse network configuration, indicating that the AAH-to-AIS transition establishes a persistent regulatory bottleneck rather than a transient fluctuation. The epithelial system moves from an expanded, coordinated response state into a less organized precursor state before a new invasive network is established.
+
+This finding provides a mechanistic interpretation for a stage edge that is often treated only as a histologic boundary. In the StageBridge model, AAH-to-AIS is a transition in regulatory organization, not merely a change in average gene expression.
+
+\section{Invasion requires a tissue-system switch}
+
+The later transition to LUAD was associated with renewed regulatory connectivity, but the network was qualitatively different from the earlier AAH state. The invasive program combined regulatory rewiring with increased proliferation, immune suppression, vascular adaptation, and extracellular-matrix remodeling.
+
+The matrix metalloproteinase finding is particularly important. The late transition was not described by a uniform monotonic rise in all MMPs. The matrix program changed direction and composition around MIA-to-LUAD, consistent with replacement of precursor-associated matrix regulation by an invasion-associated remodeling system. This result places the extracellular matrix within the transition mechanism rather than treating it as a passive endpoint of tumor growth.
+
+The Switch phase therefore reflects coordinated reorganization across epithelial, stromal, vascular, and immune compartments. Invasive disease is supported by a newly configured tissue system rather than by continuation of the same precursor program.
+
+\section{Prime--Collapse--Switch as an integrated progression model}
+
+The integrated biological model can be summarized as follows:
+
+\begin{equation}
+\mathrm{Prime}
+\rightarrow
+\mathrm{Collapse}
+\rightarrow
+\mathrm{Switch}.
+\end{equation}
+
+During Prime, inflammatory and stromal context expands coordinated regulatory activity in AAH. During Collapse, the AAH-to-AIS transition disrupts transcription-factor network organization and establishes a persistent regulatory bottleneck. During Switch, LUAD develops a rewired regulatory and tissue-support program characterized by matrix remodeling, vascular adaptation, immune suppression, and proliferation.
+
+This sequence is more informative than a model in which every malignant feature increases steadily with stage. Different biological systems dominate different transition windows. Early inflammation and regulatory coordination are followed by network contraction, after which invasion establishes a new matrix- and tissue-remodeling program.
+
+\section{Methodological contribution to transformer-based single-cell modeling}
+
+StageBridge was developed as a transformer-based model for structured biological sets. The Set Transformer is used because a spatial neighborhood is not a sentence: neighboring cells do not possess one canonical order, and the model must remain permutation invariant while retaining receiver-specific and distance-dependent interactions.
+
+The transformer component is integrated with optimal transport and conditional flow matching rather than used as a generic high-capacity encoder. Optimal transport defines cross-sectional stage couplings, the receiver-centered transformer encodes structured context, and conditional flow matching learns the continuous transition field. CCRT then converts the difference between full and receiver-only fields into the principal context-effect quantity.
+
+This integration provides a clear role for each computational component and directly connects the architecture to the biological question.
+
+\section{Scope and next-stage validation}
+
+The completed LUAD analysis is sufficient to establish the CCRT formulation and the Prime--Collapse--Switch biological model. The highest-priority next step is not expansion to additional cancers before the LUAD result registry is frozen. It is consolidation of the canonical model version, fold assignments, output schema, exact statistics, and donor-level biological summaries.
+
+Cross-tissue evaluation remains an important next-stage test. A pancreatic intraepithelial neoplasia application could determine whether the same transition grammar recurs in another epithelial malignancy while allowing the specific receivers, senders, regulatory programs, and matrix biology to differ. Such an analysis would test generalization of CCRT rather than serving as a prerequisite for the present thesis.
+
+Perturbational validation is another direct extension. Counterfactual removal of IL1B-associated macrophage context, selected stromal programs, transcription-factor mediators, or MMP-associated matrix signals can prioritize experimentally testable context residuals. These predictions can then be compared with organoid, coculture, perturb-seq, or spatially resolved intervention data.
+
+\section{Conclusion}
+
+StageBridge demonstrates that premalignant epithelial progression can be represented as an ordered transport process whose trajectory is constrained by receiver state and modified by local tissue context. The CCRT formulation separates these components and provides a direct estimate of the context-associated residual on progression.
+
+In lung adenocarcinoma precursors, this framework identified a coherent early transition, inflammatory niche priming, expansion of transcription-factor coordination in AAH, regulatory collapse during AAH-to-AIS, and a later invasive switch involving regulatory rewiring, matrix remodeling, vascular adaptation, immune suppression, and proliferation. These findings establish StageBridge as both a computational transition model and a biological framework for understanding how stage-specific tissue contexts reshape premalignant epithelial progression.
+
+% TODO: Add comparison to related methods, final citations, and a concise table of
+% methodological and biological contributions.
