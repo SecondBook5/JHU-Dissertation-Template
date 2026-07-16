@@ -1,23 +1,105 @@
-\chapter{A long chapter title test the distance to the quote} \label{chap:chap-4}
+\chapter{Results} \label{chap:results}
 
+\section{StageBridge recovered ordered epithelial transition structure}
 
-\begin{singlespace}
-    \epigraph{This is a large quote placed with \\ 
-    single spacing over two lines}{-- Unknown Author}
-\end{singlespace}
+StageBridge was evaluated across the ordered progression sequence from Normal lung through AAH, AIS, MIA, and LUAD. The model learned stage-edge-specific transition fields rather than a single global trajectory. Transition structure was strongest during early progression. In the current canonical result registry, Normal-to-preinvasive drift alignment was
 
+\begin{equation}
+0.964\pm0.008,
+\end{equation}
 
-%% remove the following and add your chapter text here
-\section{A long section heading to test the distance before this}
+whereas alignment across the full heterogeneous progression landscape was
 
-\blindtext
+\begin{equation}
+0.309\pm0.081.
+\end{equation}
 
-\begin{figure}[ht]
-\begin{center}
-    \includegraphics[width=\textwidth, trim={6cm 5cm 6cm 5cm},clip,page=1] {chap4.pdf}
-    \caption{Here are some photos of ducks to make you feel happy in tough times.}
-    \label{fig:ducks}
-\end{center}
-\end{figure}
+The difference between these values indicates that early epithelial progression occupies a substantially more coherent transition geometry than the combined later-stage landscape. Later transitions incorporate greater diversity in epithelial lineage state, genomic background, proliferative behavior, and tissue context.
 
-\Blindtext[2]
+% RESULT LOCK: Recompute these metrics from the frozen CCRT checkpoint set and
+% report fold-level values, confidence intervals, model version, and metric definition.
+
+\section{CCRT separated receiver-intrinsic transport from context residuals}
+
+The receiver-intrinsic model captured a large component of progression-associated displacement, demonstrating that epithelial state strongly constrains the direction of transition. The full CCRT model nevertheless improved held-out transition modeling when structured local context was added. The difference between the two models defined a nonzero context-residual field whose magnitude and direction varied across receiver states and stage edges.
+
+Architectural ablations supported the same conclusion. Performance deteriorated when learned gating was removed, when the two reference atlases were replaced by a single reference, when learned reference fusion was simplified, and when structured niche information was excluded or disrupted. StageBridge also outperformed simpler pooling, DeepSets, flat Set Transformer, and graph-based baselines in the poster-era evaluation registry.
+
+These results support a specific biological interpretation: the epithelial receiver state defines much of the available transition direction, whereas local context modifies the transition that is expressed. Context therefore acts as a structured residual rather than replacing intrinsic epithelial identity.
+
+% RESULT LOCK: Resolve the older and newer validation-loss scales before inserting
+% exact ablation percentages. Do not mix the poster registry with preliminary tables.
+
+\section{Inflammatory niche remodeling emerged before invasion}
+
+The earliest biological pattern was an increase in IL1B-associated inflammatory context. The working analysis showed an increase in the fraction of IL1B-positive observations from approximately 31\% in Normal tissue to 49\% in preinvasive lesions and 51\% in invasive disease. Mean IL1B-associated signal increased by approximately 2.8-fold across progression and was enriched near transition-associated spatial regions.
+
+This increase did not reflect a uniform expansion of every immune compartment. Broad T-cell, macrophage, and fibroblast representation changed nonlinearly across Normal, preinvasive, and invasive tissue. Preinvasive lesions showed reduced broad immune and stromal abundance together with increased inflammatory signaling, indicating selective tissue reorganization rather than generalized leukocyte accumulation.
+
+The learned context representation also contained dimensions associated with TGF-$\beta$, TNF-$\alpha$/NF-$\kappa$B, stage, and transition-region status. These associations indicate that the model's context residual captured interpretable inflammatory and stromal structure rather than only technical or compositional variation.
+
+% RESULT LOCK: Recalculate IL1B and cell-composition summaries at the donor/sample
+% level. Resolve the previously inconsistent T-cell reduction percentage before use.
+
+\section{AAH formed a regulatory-priming state}
+
+Stage-specific transcription-factor analysis revealed a nonlinear regulatory sequence. The transcription-factor co-regulation network expanded from Normal lung into AAH, indicating increased coordination among inflammatory, stress-response, lineage, and tissue-remodeling regulators. AAH was therefore not simply a weak intermediate between Normal tissue and AIS. It represented a distinct, coordinated regulatory state positioned within an inflammatory and stromal niche.
+
+AP-1-, NF-$\kappa$B-, STAT-, and SP1-associated programs contributed to this early response. The combination of inflammatory niche activation and increased regulatory connectivity supports a model in which AAH epithelial cells are primed by local context while retaining an organized transcriptional response.
+
+This stage defines the \emph{Prime} phase of the integrated progression model.
+
+% RESULT LOCK: Insert the final TF list, network-construction threshold, donor-aware
+% statistical model, edge count, density, clustering coefficient, and robustness analyses.
+
+\section{The AAH-to-AIS transition marked a regulatory collapse}
+
+The strongest regulatory break occurred between AAH and AIS. Transcription-factor network connectivity contracted sharply, and network clustering decreased. Regulatory relationships involving FOS/AP-1 coordination with SP1- and NF-$\kappa$B-associated programs were among the relationships disrupted in the transition analysis.
+
+AIS and MIA retained a relatively sparse regulatory configuration compared with AAH. The transition was therefore not characterized by a simple monotonic increase in oncogenic transcription-factor activity. Instead, an initially coordinated inflammatory and adaptive network lost organization before morphologic invasion.
+
+This finding identifies AAH-to-AIS as a regulatory bottleneck and defines the \emph{Collapse} phase. The result connects the learned stage transition to a specific systems-level change: progression from AAH to AIS is accompanied by loss of coordinated regulatory control.
+
+% RESULT LOCK: Recover the exact stage-specific TF edge counts and the complete set
+% of lost, retained, and gained edges from the source output. Confirm FOS--SP1 and
+% FOS--NF-kappaB relationships in the frozen analysis before final wording.
+
+\section{Invasive progression established a new regulatory and tissue program}
+
+The regulatory network increased in connectivity again in LUAD, but the later network did not represent restoration of the Normal or AAH state. It was accompanied by immune-suppressive, vascular, proliferative, and extracellular-matrix programs characteristic of an invasive tissue ecosystem.
+
+Proliferation increased strongly across progression. The working result registry reports an increase from approximately 7.1\% in Normal tissue to 25.7\% in invasive disease, corresponding to a 3.6-fold increase. This proliferative expansion occurred alongside changes in T-cell state, stromal organization, angiogenic signaling, and vascular or lymphatic remodeling.
+
+The later regulatory increase is therefore interpreted as rewiring: a new network supports invasive growth rather than recovering the earlier coordinated precursor response.
+
+% RESULT LOCK: Verify proliferation thresholds, sample-level aggregation, and the
+% exact vascular and immune-suppressive programs retained in the final figure set.
+
+\section{Matrix metalloproteinase programs changed at the invasive transition}
+
+Matrix-remodeling analysis identified a stage-specific change in matrix metalloproteinase and extracellular-matrix programs around the transition from MIA to LUAD. The key finding was not a uniform increase in every metalloproteinase across all stages. Instead, the direction and composition of the matrix program changed as invasive disease emerged.
+
+This pattern indicates replacement of a precursor-associated stromal and matrix state by an invasion-associated remodeling program. Matrix proteolysis, extracellular-matrix reorganization, fibroblast state, and vascular adaptation therefore formed part of the late transition rather than merely tracking total tumor burden.
+
+The matrix result defines a major component of the \emph{Switch} phase: regulatory rewiring is coupled to a qualitatively different tissue-remodeling system that can support invasion.
+
+% RESULT LOCK: Recover the exact MMP identities, effect directions, receiver and
+% sender compartments, stage contrasts, and statistical tests from the source files.
+
+\section{An integrated Prime--Collapse--Switch sequence organized progression}
+
+The model and biological analyses converged on a three-phase sequence:
+
+\begin{enumerate}
+    \item \textbf{Prime:} Normal-to-AAH progression was associated with IL1B-rich inflammatory context, stromal activation, and expanded transcription-factor coordination.
+    \item \textbf{Collapse:} AAH-to-AIS progression was associated with abrupt contraction of the transcription-factor co-regulation network and persistence of a sparse regulatory state through MIA.
+    \item \textbf{Switch:} MIA-to-LUAD progression established a rewired invasive program involving matrix remodeling, vascular adaptation, immune suppression, and proliferative expansion.
+\end{enumerate}
+
+CCRT connects these phases through a common transition-level interpretation. Receiver state defines the baseline progression field, while local inflammatory, stromal, immune, and vascular contexts contribute stage-specific residual effects. The resulting narrative is not that one niche factor causes all progression. Rather, distinct tissue contexts modify different transition windows and are associated with different regulatory consequences.
+
+\section{Summary of findings}
+
+StageBridge recovered coherent early transition structure, demonstrated measurable context-dependent residual transport, and identified a nonlinear sequence of tissue and regulatory reorganization. The strongest biological finding was the alignment of early inflammatory priming, AAH regulatory expansion, AAH-to-AIS transcription-factor network collapse, and a later MMP/ECM-centered invasive switch. Together, these results establish a thesis-level connection between computational transition modeling and stage-specific biological mechanisms.
+
+% TODO: Add primary and supplemental result tables, exact statistics, and final figures.
