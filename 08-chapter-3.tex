@@ -1,29 +1,275 @@
-\chapter{Chapter title goes here} \label{chap:chap-3}
+\chapter{StageBridge: Context-Conditioned Residual Transport} \label{chap:methods}
 
+\section{Problem formulation}
 
-% epigraph after chapter heading
-\epigraph{Since it is written in \LaTeX, it must be true.}{-- Isaac Newton}
+Let $h_i\in\mathbb{R}^{d}$ denote the latent state of epithelial receiver $i$, let $e=(s,t)$ denote an ordered disease-stage edge, let $\tau\in[0,1]$ denote normalized transition time, and let $\mathcal{C}_i$ denote the typed local context surrounding receiver $i$. StageBridge estimates a continuous transition field that maps source-stage epithelial states toward target-stage epithelial states while preserving an explicit decomposition between the receiver-intrinsic transition and the context-associated residual.
 
+The complete field is written as
 
-%%%% MUST: add the citation for the chapter if it is a reprint
+\begin{equation}
+\frac{d h_i}{d\tau}
+=
+v_{e}^{(0)}(h_i,\tau)
++
+\Delta v_{\theta}(h_i,\mathcal{C}_i,e,\tau),
+\label{eq:ccrt-core}
+\end{equation}
 
+where $v_{e}^{(0)}$ is the receiver-intrinsic transition field for stage edge $e$ and $\Delta v_{\theta}$ is the context-conditioned residual transport field. The central estimand is therefore
 
+\begin{equation}
+\Delta v_{\theta}
+=
+v_{\mathrm{full}}-v_{\mathrm{receiver}},
+\label{eq:context-residual}
+\end{equation}
 
-%% remove the following and add your chapter text here
-\section{Introduction}
-\blindtext 
+which measures how structured local context changes the transition expected from the epithelial receiver state alone.
 
+\section{Regulatory mediation of the context residual}
 
-\section{Current approach}
-\blindtext\footnote{Hello, this is the first footnote with no indentation and single-spaced text. The spacing between two footnotes is also single-spaced.}
+StageBridge allows the context residual to be decomposed into an interpretable regulatory contribution and a flexible nonlinear residual:
 
-\subsection{Hypothesis statement}
-\blindtext\footnote{This is the second footnote.}
+\begin{equation}
+\Delta v_{\theta}(h_i,\mathcal{C}_i,e,\tau)
+=
+B_e r_i
++
+r_{\theta}(h_i,\mathcal{C}_i,e,\tau),
+\label{eq:regulatory-residual}
+\end{equation}
 
+where $r_i$ is a low-dimensional regulatory representation, $B_e$ maps regulatory programs into the direction of the stage-specific transition, and $r_{\theta}$ captures residual context effects not explained by the regulatory bottleneck alone. This formulation permits direct comparison between context-associated signaling, inferred transcription-factor programs, and the resulting transition displacement.
 
-\subsection{Experimental evidences}
-\blindtext
+The regulatory representation can include pathway activity, transcription-factor activity, regulon scores, and learned latent mediators. Stage-specific mappings $B_e$ allow the same regulatory program to have different transition consequences at different points in progression.
 
+\section{Grammar-conditioned representation}
 
-\subsubsection{Data analysis}
-\blindtext
+The CCRT formulation is organized around a common transition grammar rather than a requirement that every tissue share identical cell types or molecular features. Each training instance contains a receiver state, ordered transition edge, typed sender context, relative spatial structure, signaling or pathway features, regulatory mediators, and a target transition behavior. The shared grammar can be summarized as
+
+\begin{equation}
+\mathcal{G}_i
+=
+\left(
+\mathrm{receiver},
+\mathrm{edge},
+\mathrm{sender\ context},
+\mathrm{distance},
+\mathrm{signal},
+\mathrm{regulation},
+\mathrm{transition}
+\right)_i.
+\end{equation}
+
+This organization provides a route to future cross-tissue evaluation without forcing LUAD and another epithelial malignancy to use identical biological vocabularies.
+
+\section{Dual-reference latent geometry}
+
+Each epithelial receiver and context cell is represented relative to both the Human Lung Cell Atlas and Lung Cancer Atlas. Let $z_i^{H}$ and $z_i^{L}$ denote the two reference-derived embeddings. A learned fusion module produces
+
+\begin{equation}
+\tilde{h}_i
+=
+f_{\mathrm{fuse}}\left(z_i^{H},z_i^{L}\right).
+\end{equation}
+
+The fusion module can assign state-dependent weight to healthy-lung and tumor-aware coordinates. Single-reference and alternative-fusion ablations test whether this learned combination improves transition modeling.
+
+\section{Receiver-centered context tokenization}
+
+For receiver $i$, each neighboring sender $j$ is converted into a context token
+
+\begin{equation}
+q_{ij}
+=
+f_{\mathrm{token}}
+\left(
+\tilde{h}_j,
+\mathrm{type}_j,
+\delta_{ij},
+\pi_j
+\right),
+\end{equation}
+
+where $\tilde{h}_j$ is the sender representation, $\mathrm{type}_j$ is the sender identity or compartment, $\delta_{ij}$ is the relative spatial distance, and $\pi_j$ contains pathway, signaling, or regulatory features. The resulting context is the unordered set
+
+\begin{equation}
+Q_i=\left\{q_{ij}\right\}_{j=1}^{K_i}.
+\end{equation}
+
+A receiver-centered Set Transformer encodes $Q_i$ using permutation-invariant attention. Distance enters the attention calculation as a learned bias or weight, allowing nearby senders to contribute differently from more distant senders without imposing a hard universal radius.
+
+The context representation is
+
+\begin{equation}
+c_i
+=
+f_{\mathrm{context}}\left(Q_i\mid \tilde{h}_i\right),
+\end{equation}
+
+where conditioning on $\tilde{h}_i$ allows the same sender configuration to have different meanings for different epithelial receiver states.
+
+\section{Receiver-intrinsic and full transition models}
+
+The receiver-intrinsic model predicts the transition field using the receiver representation, stage edge, and transition time:
+
+\begin{equation}
+\hat{v}_{i}^{(0)}
+=
+f_{0}\left(h_{i,\tau},\tilde{h}_i,e,\tau\right).
+\end{equation}
+
+The full model adds the context representation:
+
+\begin{equation}
+\hat{v}_{i}^{\mathrm{full}}
+=
+f_{\mathrm{full}}
+\left(h_{i,\tau},\tilde{h}_i,c_i,e,\tau\right).
+\end{equation}
+
+The learned context residual is evaluated directly as
+
+\begin{equation}
+\widehat{\Delta v}_i
+=
+\hat{v}_{i}^{\mathrm{full}}
+-
+\hat{v}_{i}^{(0)}.
+\end{equation}
+
+This paired construction is preferable to interpreting attention weights alone because it gives context a transition-level effect size in the same latent geometry as the modeled displacement.
+
+\section{Optimal-transport coupling}
+
+For stage edge $e=(s,t)$, let $\mu_s$ and $\mu_t$ denote empirical epithelial-state distributions at the source and target stages. StageBridge estimates an entropy-regularized optimal-transport plan
+
+\begin{equation}
+\pi_e^{*}
+=
+\operatorname*{arg\,min}_{\pi\in\Pi(\mu_s,\mu_t)}
+\left\langle C_e,\pi\right\rangle
++
+\varepsilon\,\mathrm{KL}
+\left(
+\pi\,\|\,\mu_s\otimes\mu_t
+\right),
+\label{eq:ot}
+\end{equation}
+
+where $C_e$ is a stage-specific transport cost and $\varepsilon$ controls regularization. Coupled source--target pairs are sampled from $\pi_e^{*}$ for conditional flow-matching training.
+
+Transport costs are defined in the shared latent space and can incorporate state similarity, reference geometry, and selected biological constraints. Couplings are estimated independently for each adjacent stage edge.
+
+\section{Conditional flow matching}
+
+Given a coupled source state $h_0$ and target state $h_1$, an interpolation path is defined by
+
+\begin{equation}
+h_{\tau}
+=
+(1-\tau)h_0+\tau h_1+\sigma(\tau)\epsilon,
+\end{equation}
+
+where $\epsilon$ is a noise term and $\sigma(\tau)$ specifies the interpolation noise schedule. The conditional target velocity $u_{\tau}$ is determined by the selected probability path. The flow-matching objective is
+
+\begin{equation}
+\mathcal{L}_{\mathrm{CFM}}
+=
+\mathbb{E}
+\left[
+\left\|
+\hat{v}_{\theta}(h_{\tau},\mathcal{G}_i,\tau)
+-
+u_{\tau}(h_0,h_1,\epsilon)
+\right\|_2^2
+\right].
+\label{eq:cfm}
+\end{equation}
+
+The trained vector field defines a continuous stage-conditioned transition rather than only a one-step target-state prediction.
+
+\section{Self-supervised context pretraining}
+
+Before transition training, the context encoder is pretrained through masked receiver reconstruction. Receiver-associated molecular or state features are masked, and the model predicts the missing receiver representation from the remaining receiver information and local context. The pretraining objective is
+
+\begin{equation}
+\mathcal{L}_{\mathrm{SSL}}
+=
+\left\|
+\hat{h}_i-h_i
+\right\|_2^2,
+\end{equation}
+
+with masking and corruption applied according to the training configuration. This stage encourages the context encoder to learn biologically coherent neighborhood structure before it is optimized for transport.
+
+\section{Growth-aware transition rates}
+
+State displacement and population expansion are related but distinct. A growth-aware extension models the transition-associated rate as
+
+\begin{equation}
+g_i^{\mathrm{full}}
+=
+g_e^{(0)}(h_i,\tau)
++
+\Delta g_{\phi}(h_i,\mathcal{C}_i,e,\tau),
+\end{equation}
+
+where $g_e^{(0)}$ is the receiver-intrinsic growth or survival component and $\Delta g_{\phi}$ is the context-associated residual. This component connects proliferation, survival, and tissue remodeling to the transport field without requiring them to be encoded solely as displacement.
+
+% TODO: Align this section exactly with the frozen implementation used for the thesis.
+
+\section{Counterfactual context perturbation}
+
+The residual formulation supports context counterfactuals. For a selected sender population, pathway, or signaling program, a perturbed context $\mathcal{C}_i^{(-k)}$ is constructed by removal, masking, replacement, or controlled attenuation. The counterfactual effect is
+
+\begin{equation}
+\Delta_{k}v_i
+=
+\hat{v}^{\mathrm{full}}
+\left(h_i,\mathcal{C}_i,e,\tau\right)
+-
+\hat{v}^{\mathrm{full}}
+\left(h_i,\mathcal{C}_i^{(-k)},e,\tau\right).
+\end{equation}
+
+Counterfactual effects are summarized by receiver state, stage edge, sender type, and biological program. These analyses prioritize transition sensitivity rather than treating the presence of a ligand--receptor pair as sufficient evidence of functional influence.
+
+\section{Training and model selection}
+
+Model development uses patient-aware cross-validation with repeated random seeds. Hyperparameters are selected within training data, and held-out donors are used only for final fold-level evaluation. Checkpoints, model configuration, dataset manifest, random seed, fold assignment, and output schema are stored together to make each result traceable to an exact analysis run.
+
+The total training objective combines the transition, regulatory, reconstruction, and optional growth components:
+
+\begin{equation}
+\mathcal{L}
+=
+\lambda_{\mathrm{CFM}}\mathcal{L}_{\mathrm{CFM}}
++
+\lambda_{\mathrm{SSL}}\mathcal{L}_{\mathrm{SSL}}
++
+\lambda_{\mathrm{reg}}\mathcal{L}_{\mathrm{reg}}
++
+\lambda_{\mathrm{growth}}\mathcal{L}_{\mathrm{growth}}.
+\end{equation}
+
+\section{Evaluation metrics and ablations}
+
+Primary evaluation metrics include held-out transition loss, displacement error, drift alignment, distributional distance between predicted and target states, and consistency across folds and seeds. Biological alignment is evaluated using stage-associated pathway, inflammatory, regulatory, and proliferative programs.
+
+The core ablations are:
+
+\begin{itemize}
+    \item receiver-intrinsic model without structured context;
+    \item disrupted or permuted context;
+    \item context without distance information;
+    \item alternative pooling, DeepSets, Set Transformer, and graph-based encoders;
+    \item single-reference models using HLCA or LuCA alone;
+    \item alternative dual-reference fusion strategies;
+    \item removal of the regulatory bottleneck or learned gating components.
+\end{itemize}
+
+Together, these experiments test whether performance depends on biologically structured context rather than only increased model capacity.
+
+% TODO: Add architecture diagram, algorithm environment, final hyperparameter table,
+% and exact equations from the frozen CCRT implementation.
