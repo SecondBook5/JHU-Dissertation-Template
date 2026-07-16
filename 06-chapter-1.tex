@@ -1,10 +1,47 @@
-\chapter{Chapter title goes here} \label{chap:chap-1}
+\chapter{Introduction} \label{chap:introduction}
 
-% if you want a short header you can use the following command
-% \chapter[short-header-name]{chapter-title} \label{chap:chap-1}
+\section{Premalignant progression as a tissue-transition problem}
 
+Lung adenocarcinoma develops through a sequence of epithelial and tissue-level changes that can be recognized histologically as atypical adenomatous hyperplasia (AAH), adenocarcinoma in situ (AIS), minimally invasive adenocarcinoma (MIA), and invasive lung adenocarcinoma (LUAD). These stages provide an ordered view of progression, but histology alone does not identify the transition mechanisms that connect them. The central biological question is therefore not only which molecular programs characterize each stage, but how epithelial cells move between stage-associated states and how surrounding immune, stromal, and vascular compartments modify those movements.
 
-%% add your chapter text here
-\blindtext \cite{dirac}
+Premalignant progression is inherently multiscale. Genomic alterations change the set of epithelial states available to a lesion. Transcription-factor programs coordinate stress responses, lineage plasticity, proliferation, and survival. Local macrophages, lymphocytes, fibroblasts, endothelial cells, and extracellular matrix establish a context in which those programs operate. A progression model that treats the epithelial state in isolation can recover important intrinsic structure, but it cannot determine whether a local inflammatory or stromal configuration redirects the expected transition. Conversely, a model that merges the receiver cell and its neighborhood into a single representation cannot cleanly attribute the additional effect of context.
 
-\Blindtext[3]
+This thesis treats progression as a context-conditioned transport problem. For each epithelial receiver, the objective is to estimate a baseline transition associated with the receiver state and ordered stage edge, then estimate the residual change associated with the local tissue context. This decomposition turns niche analysis from a descriptive inventory of neighboring cells into a transition-level question: which local contexts change the direction, magnitude, or rate of epithelial progression?
+
+\section{The inferential gap in cross-sectional single-cell and spatial omics}
+
+Single-cell RNA sequencing and spatial transcriptomics provide complementary views of tissue organization. Single-cell measurements resolve cellular states and regulatory programs at high molecular depth. Spatial measurements preserve local composition and tissue architecture. Together, they can identify stage-associated epithelial populations, inflammatory niches, cell--cell signaling programs, and spatially restricted transition regions.
+
+The same technologies create a fundamental inferential challenge. Tissue acquisition destroys the measured cells, so the same epithelial receiver cannot be observed before and after progression. Samples collected at Normal, AAH, AIS, MIA, and LUAD stages are cross-sectional observations from different lesions and patients. A computational framework must therefore infer plausible couplings between stage-specific populations and learn a transition field from those couplings while controlling for patient structure, platform differences, and local tissue composition.
+
+Most standard analyses operate on one stage at a time. Differential-expression analysis identifies genes that change between groups. Cell-composition analysis identifies populations that expand or contract. Ligand--receptor analysis identifies candidate communication channels. Trajectory methods order cells along low-dimensional paths, but they often omit explicit spatial context or assume that all cells share one progression geometry. These approaches remain valuable, but they do not directly estimate the context-associated residual on an ordered epithelial transition.
+
+\section{StageBridge and context-conditioned residual transport}
+
+StageBridge addresses this gap through context-conditioned residual transport (CCRT). The framework defines an epithelial receiver-intrinsic transition field and a context-residual field. The receiver-intrinsic component represents the transition expected from the epithelial state and stage edge. The context-residual component represents the additional change associated with a structured local neighborhood of typed sender states, distances, and molecular programs.
+
+The implementation combines four elements. First, dual lung references provide complementary coordinates for healthy and tumor-associated cell states. Second, a receiver-centered Set Transformer encodes the local neighborhood without imposing an artificial ordering on neighboring cells. Third, optimal transport constructs stage-to-stage couplings between cross-sectional epithelial populations. Fourth, conditional flow matching learns a continuous transition field connecting coupled source and target states. The resulting model can be evaluated through held-out transition prediction, architectural ablations, context disruption, and biological interpretation of learned residuals.
+
+\section{Biological hypothesis}
+
+The central hypothesis is that epithelial progression contains a strong receiver-intrinsic component but is systematically modified by local tissue context. Under this hypothesis, inflammatory and stromal niches do not need to determine the entire transition to have a biologically important role. A context may instead amplify, suppress, or redirect a transition that is already available to the epithelial receiver.
+
+The LUAD precursor application further tests whether progression is organized into distinct regulatory phases. The working biological model is a Prime--Collapse--Switch sequence. In AAH, inflammatory and stromal signaling primes a coordinated regulatory state. During the AAH-to-AIS transition, transcription-factor coordination contracts, defining a regulatory bottleneck before invasion. During the later transition to LUAD, a new invasive program emerges through regulatory rewiring, matrix remodeling, vascular adaptation, immune suppression, and proliferation.
+
+\section{Thesis contributions}
+
+This thesis makes four primary contributions:
+
+\begin{enumerate}
+    \item It formulates premalignant epithelial progression as a context-conditioned residual transport problem.
+    \item It develops a receiver-centered architecture that integrates dual-reference cell-state geometry, set-based spatial niche encoding, optimal transport, and conditional flow matching.
+    \item It evaluates whether structured context improves progression-aligned transition modeling beyond receiver state alone.
+    \item It identifies a stage-specific biological sequence linking inflammatory niche priming, transcription-factor network collapse, and invasive matrix and tissue-system rewiring.
+\end{enumerate}
+
+\section{Organization of the thesis}
+
+Chapter~\ref{chap:data} describes the LUAD precursor cohort, multimodal data integration, stage definitions, and construction of receiver-centered spatial contexts. Chapter~\ref{chap:methods} presents the CCRT formulation, model architecture, training objectives, evaluation design, and biological interpretation strategy. Chapter~\ref{chap:results} reports model performance, context-residual findings, and the Prime--Collapse--Switch biological sequence. Chapter~\ref{chap:discussion} integrates the computational and biological results, defines the contribution of StageBridge, and outlines the path toward cross-tissue validation and perturbational testing.
+
+% TODO: Add primary citations for LUAD precursor biology, spatial transcriptomics,
+% optimal transport, conditional flow matching, Set Transformers, and niche modeling.
